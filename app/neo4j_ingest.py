@@ -112,12 +112,13 @@ def ingest_data(csv_path):
 
 
 if __name__ == "__main__":
-    # Adjust path as needed relative to execution
-    # Assuming script is run from retail-graph-analytics/app/.. or similar
-    # The file path is /Users/sorratat.sir.adm/Project/retail-analytics-adk/data/Retail_Transactions_Dataset.csv
-    # But this script is located at /Users/sorratat.sir.adm/Project/retail-analytics-adk/retail-graph-analytics/app/neo4j_ingest.py
-    # So we need to go up 3 levels to reach 'data'
+    import sys
 
-    # Using absolute path from workspace info for robustness
-    csv_file_path = "/Users/sorratat.sir.adm/Project/retail-analytics-adk/data/Retail_Transactions_Dataset.csv"
+    if len(sys.argv) > 1:
+        csv_file_path = sys.argv[1]
+    else:
+        # Default fallback
+        csv_file_path = "Retail_Transactions_Dataset.csv"
+
+    print(f"Ingesting data from: {csv_file_path}")
     ingest_data(csv_file_path)
