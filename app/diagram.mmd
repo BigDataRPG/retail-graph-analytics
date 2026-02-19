@@ -1,0 +1,22 @@
+flowchart TD
+    U[User Question] --> R[Router Agent<br/>Cheap model / short prompt<br/>Decide intent: query? html? csv?]
+    
+    R -->|need_query = false| A0[Direct Answer<br/>(no Neo4j)]
+    
+    R -->|need_query = true| SC{Schema Cache exists?}
+    SC -->|Yes| SB[Schema Summary<br/>(cached)]
+    SC -->|No| GS[get_graph_schema tool<br/>(Neo4j)] --> C[Save schema to cache] --> SB
+    
+    SB --> CB[Cypher Builder Agent<br/>Flash model<br/>Return: cypher + params + expected cols]
+    
+    CB --> V[Cypher Validator (Non-LLM)<br/>Read-only check + enforce LIMIT]
+    V -->|Rejected| ER[Return error + ask clarification]
+    
+    V -->|Approved| Q[run_cypher_query tool<br/>(Neo4j)]
+    
+    Q --> AN[Analyst Agent<br/>Flash (or Pro for writing)<br/>Return: answer_bullets + dashboard_spec]
+    
+    AN -->|need_html = false| OUT[Final Answer<br/>Bullets + key findings]
+    
+    AN -->|need_html = true| H[save_html_dashboard tool<br/>(Deterministic, no LLM)]
+    H --> OUT2[Final Answer + HTML path/link]

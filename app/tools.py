@@ -1,5 +1,6 @@
 import os
 
+from app.html_dashboard_tools import save_html_dashboard  # noqa: F401
 from neo4j import GraphDatabase
 
 # Neo4j connection details
@@ -57,7 +58,8 @@ def get_graph_schema() -> str:
             schema_info.append(f"Relationship Types: {', '.join(rels)}")
 
             # Property keys (sampling)
-            # A more robust way might be to sample nodes/rels, but for now specific per label/type
+            # A more robust way might be to sample nodes/rels, but for now specific
+            # per label/type
             # Query to get properties for each label
             for label in labels:
                 props_query = f"MATCH (n:{label}) RETURN keys(n) AS keys LIMIT 1"
