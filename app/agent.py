@@ -18,15 +18,16 @@ import os
 from zoneinfo import ZoneInfo
 
 import google.auth
-from app.prompts.analyst_agent.strong import PROMPT_ANALYST_AGENT_STRONG
-from app.prompts.cypher_agent.strong import PROMPT_CYPHER_AGENT_STRONG
-from app.prompts.root_agent.strong import PROMPT_ROOT_AGENT_STRONG
-from app.tools import get_graph_schema, run_cypher_query, save_html_dashboard
 from google.adk.agents import Agent, LlmAgent
 from google.adk.apps import App
 from google.adk.models import Gemini
 from google.adk.tools import LongRunningFunctionTool
 from google.genai import types
+
+from app.prompts.analyst_agent.strong import PROMPT_ANALYST_AGENT_STRONG
+from app.prompts.cypher_agent.strong import PROMPT_CYPHER_AGENT_STRONG
+from app.prompts.root_agent.strong import PROMPT_ROOT_AGENT_STRONG
+from app.tools import get_graph_schema, run_cypher_query, save_html_dashboard
 
 _, project_id = google.auth.default()
 os.environ["GOOGLE_CLOUD_PROJECT"] = project_id
@@ -38,7 +39,7 @@ os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
 # for query generation. (Can upgrade to Pro if complex reasoning is needed for complex queries).
 cypher_builder_agent = Agent(
     name="cypher_builder_agent",
-    model=Gemini(model="gemini-2.0-flash-lite"),
+    model=Gemini(model="gemini-3-flash-preview"),
     description="Specialist in translating natural language questions into Neo4j Cypher queries and executing them.",
     instruction=PROMPT_CYPHER_AGENT_STRONG,
     tools=[
@@ -65,7 +66,7 @@ analyst_agent = Agent(
 root_agent = Agent(
     name="root_agent",
     model=Gemini(
-        model="gemini-2.0-flash-lite",
+        model="gemini-3-flash-preview",
         retry_options=types.HttpRetryOptions(attempts=3),
     ),
     description="Lead coordinator that delegates tasks to specialized data and analysis agents.",
